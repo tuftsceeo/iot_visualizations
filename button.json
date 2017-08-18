@@ -1,0 +1,14 @@
+{
+	"nodes": [
+		{"id": "buttonR", "img": "red-button-icon.png", "ip": "127.0.0.1", "index": 0},
+		{"id": "buttonG", "img": "green-button.ico", "ip": "120.90.1.89", "index": 1},
+		{"id": "buttonB", "img": "blue-button.png", "ip": "141.89.2.45", "index": 2},
+		{"id": "Router", "img": "wifi.png", "ip": "12.533.11.5", "index": 3}
+	],
+
+	"links": [
+		{"source": "buttonR", "target": "Router"},
+		{"source": "buttonG", "target": "Router"},
+		{"source": "buttonB", "target": "Router"}
+	]
+}

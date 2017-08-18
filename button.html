@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Connections</title>
+    <style>
+		.node {
+			fill: #ccc;
+			stroke: #fff;
+			stroke-width: 2px;
+		}
+
+		.link {
+			stroke: #777;
+			stroke-width: 2px;
+			opacity: 0.2;
+		}
+
+    </style>
+</head>
+<body>
+	<div id="force"></div>
+	<div id="new"></div>
+    <script src="http://d3js.org/d3.v3.js"></script>
+	<script>
+
+		var width = 1000,
+		    height = 650;
+
+		var nodes = [
+			{id: "buttonR", img: "pics/red-button-alumi.png",
+				img2: "pics/red-button-ff0000.png", group: 1},
+			{id: "buttonG", img: "pics/green-button-alum.png",
+				img2: "pics/green-button-00ff00.png", group: 1},
+			{id: "buttonB", img: "pics/blue-button-alumi.png",
+				img2: "pics/blue-button-0000ff.png", group: 1},
+			{id: "Light", img: "pics/blank-light.png", group: 3},
+		];
+
+		var links = [
+			{source: 0, target: 3},
+			{source: 1, target: 3},
+			{source: 2, target: 3},
+		];
+
+		/* organizing bulbs by picture/color */
+		var bulbs = [
+			{id: "red", img: "pics/r-light.png"},
+			{id: "green", img: "pics/g-light.png"},
+			{id: "blue", img: "pics/b-light.png"},
+			{id: "red-green", img: "pics/r-g-light.png"},
+			{id: "red-blue", img: "pics/r-b-light.png"},
+			{id: "green-blue", img: "pics/g-b-light.png"},
+			{id: "white", img: "pics/r-g-b-light.png"},
+		];
+
+		/* centers of gravity */
+		var centers = {
+			buttonR: {x: width / 8, y: 2 * (height / 6)},
+			buttonG: {x: width / 4, y: 3 * (height / 8)},
+			buttonB: {x: 3 * (width / 8), y: 2 * (height / 6)},
+			Light: {x: width / 4, y: height / 6}
+		};
+
+		var svg = d3.select("#force").append("svg")
+		    .attr("width", width)
+		    .attr("height", height)
+
+		svg.append("rect")
+			.attr("width", "100%")
+			.attr("height", "100%")
+			.attr("fill", "#ebebeb");
+
+		var force = d3.layout.force()
+			.gravity(0)
+			.charge(-100)
+			.linkDistance(width/4)
+			.size([width, height])
+			.nodes(nodes)
+			.links(links)
+			.start();
+
+		/* creating patterns out of images that can be displayed on nodes */
+		var defs = svg.append('svg:defs');
+		for (var i = 0; i < nodes.length; i++){
+			defs.append("svg:pattern")
+				.attr("id", "node" + i)
+				.attr("width", 1)
+				.attr("height", 1)
+				.attr("patternContentUnits", "objectBoundingBox")
+				.append("svg:image")
+				.attr("xlink:href", nodes[i].img)
+				.attr("width", 1)
+				.attr("height", 1)
+				.attr("x", 0)
+				.attr("y", 0)
+		}
+
+		for (var i = 0; i < bulbs.length; i++){
+			defs.append("svg:pattern")
+				.attr("id", "bulb" + i)
+				.attr("width", 1)
+				.attr("height", 1)
+				.attr("patternContentUnits", "objectBoundingBox")
+				.append("svg:image")
+				.attr("xlink:href", bulbs[i].img)
+				.attr("width", 1)
+				.attr("height", 1)
+				.attr("x", 0)
+				.attr("y", 0)
+		}
+
+		for (var i = 0; i < 3; i++){
+			defs.append("svg:pattern")
+				.attr("id", "button" + i)
+				.attr("width", 1)
+				.attr("height", 1)
+				.attr("patternContentUnits", "objectBoundingBox")
+				.append("svg:image")
+				.attr("xlink:href", nodes[i].img2)
+				.attr("width", 1)
+				.attr("height", 1)
+				.attr("x", 0)
+				.attr("y", 0)
+		}
+
+		function sizing(d) {
+			if (d.group == 1)
+				return 50;
+			if (d.group == 3)
+				return 60;
+		}
+
+		var link = svg.selectAll(".link")
+		    .data(links)
+		    .enter().append("line")
+		    .attr("class", "link")
+
+		var red = false;
+		var green = false;
+		var blue = false;
+		var curr_button = false;
+		var node = svg.selectAll(".node")
+			.data(nodes)
+			.enter().append("circle")
+			.attr("r", sizing)
+			.style("fill", "#fff")
+			.style("fill", function(d) { return "url(#node" + d.index + ")"; })
+			.call(force.drag)
+			.on( "mouseenter", function(d) {
+				d3.select( this )
+				  	.transition()
+				  	.attr("r", 80)
+				/* make links light up */
+				for (var i = 0; i < links.length; i++) {
+					if (d == links[i].source ||
+						d == links[i].target) {
+						link[0][i].style.opacity = 0.9;
+					}
+				}
+			})
+			.on( "mouseleave", function(d) {
+				/* make links stop lighting up */
+				d3.select( this )
+				  	.transition()
+				  	.attr("r", sizing)
+				link.style("opacity", 0.2);
+			})
+			.on( "mouseup", function(d) {
+				var source_node = d;
+				/* change the colors of the node and the light bulb */
+				curr_button = change_colors(source_node);
+				link
+					.each( function(d, i) {
+						if (d.source == source_node){
+							if (d.target.id == "Light"){
+								node.filter(function(d) { return d.group === 3; })
+									.style("fill", change_bulb);
+							}
+							node
+								.filter(function(d) {
+									return d.id === source_node.id;
+								})
+								.style("fill", function(d) {
+									return curr_button === true ? "url(#button"
+										+ d.index + ")" : "url(#node" + d.index + ")";
+								});
+						}
+					})
+			});
+
+		function change_colors(source_node) {
+			if (source_node.id == "buttonR"){
+				red = red === false ? true : false;
+				return red;
+			} else if (source_node.id == "buttonG"){
+				green = green === false ? true : false;
+				return green;
+			} else if (source_node.id == "buttonB"){
+				blue = blue === false ? true : false;
+				return blue;
+			}
+		}
+
+		function change_bulb() {
+			if (red == true && green == true && blue == true)
+				return "url(#bulb6)";
+			else if (red == true && green == true)
+				return "url(#bulb3)";
+			else if (red == true && blue == true)
+				return "url(#bulb4)";
+			else if (blue == true && green == true)
+				return "url(#bulb5)";
+			else if (red == true)
+				return "url(#bulb0)";
+			else if (green == true)
+				return "url(#bulb1)";
+			else if (blue == true)
+				return "url(#bulb2)";
+			else
+				return "url(#node3)";
+		}
+
+		force.on("tick", function(e) {
+			node.each(move_to_center(e.alpha));
+		    node
+				.attr("cx", function(d) { return d.x; })
+				.attr("cy", function(d) { return d.y; });
+
+		    link
+				.attr("x1", function(d) { return d.source.x; })
+		        .attr("y1", function(d) { return d.source.y; })
+		        .attr("x2", function(d) { return d.target.x; })
+		        .attr("y2", function(d) { return d.target.y; });
+		});
+
+		function move_to_center(alpha) {
+			return function(d) {
+				if (d.index < 4){
+					var center = centers[d.id];
+					d.x += (center.x - d.x) * 0.5 * alpha;
+					d.y += (center.y - d.y) * 0.5 * alpha;
+				}
+			};
+		}
+
+    </script>
+
+</body>
+</html>

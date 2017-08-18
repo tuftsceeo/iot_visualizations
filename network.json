@@ -1,0 +1,30 @@
+{
+	"nodes": [
+		{"id": "Arduino", "img": "pics/arduino-icon-28.png", "ip": "127.0.0.1", "group": 1},
+		{"id": "Macbook Pro", "img": "pics/mac.png", "ip": "120.90.1.89", "group": 1},
+		{"id": "X Box", "img": "pics/Xbox.png", "ip": "141.89.2.45", "group": 1},
+		{"id": "Router", "img": "pics/wifi.png", "ip": "12.533.11.5", "group": 1},
+		{"id": "iPhone", "img": "pics/iPhone-icon.png", "ip": "101.422.5.22", "group": 1},
+		{"id": "Light", "img": "pics/bulb.png", "ip": "144.22.96.91", "group": 1},
+		{"id": "buttonR", "img": "pics/red-button-ff0000.png", "ip": "R", "group": 2},
+		{"id": "buttonG", "img": "pics/green-button-00ff00.png", "ip": "G", "group": 2},
+		{"id": "buttonB", "img": "pics/blue-button-0000ff.png", "ip": "B", "group": 2},
+		{"id": "Light 2", "img": "pics/bulb.png", "ip": "144.22.96.91", "group": 1}
+
+	],
+
+	"links": [
+		{"source": 1, "target": 0},
+		{"source": 0, "target": 2},
+		{"source": 2, "target": 3},
+		{"source": 3, "target": 0},
+		{"source": 4, "target": 3},
+		{"source": 2, "target": 4},
+		{"source": 5, "target": 3},
+		{"source": 0, "target": 5},
+		{"source": 6, "target": 0},
+		{"source": 7, "target": 0},
+		{"source": 8, "target": 0},
+		{"source": 9, "target": 5}
+	]
+}
