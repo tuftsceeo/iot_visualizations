@@ -1,4 +1,4 @@
-README for D3 Visualizations
+## README for D3 Visualizations:
 	This project is a data visualization task that aims to demonstrate the
 	links between different elements of an Internet of Things network. D3 is
 	a data visualization tool that directly manipulates HTML elements like
@@ -9,7 +9,7 @@ README for D3 Visualizations
 	Useful examples to get started with:
 		https://bl.ocks.org/mbostock
 
-Software Needed to run:
+## Software Needed to run:
 	For files that require d3.json, a simple server must be run. For these
 	purposes, python -m SimpleHTTPServer is adequate (type into command
 	line in the directory that the file is in). Otherwise, the files are
