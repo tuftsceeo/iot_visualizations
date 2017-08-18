@@ -12,5 +12,5 @@
 ## Software Needed to run:
 	For files that require d3.json, a simple server must be run. For these
 	purposes, python -m SimpleHTTPServer is adequate (type into command
-	line in the directory that the file is in). Otherwise, the files are
-	HTML files.
+	line in the directory that the file is in) and run using localhost in
+	the browser. Otherwise, the files are HTML files.
